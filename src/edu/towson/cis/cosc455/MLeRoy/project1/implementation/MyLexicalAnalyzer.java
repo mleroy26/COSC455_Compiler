@@ -1,6 +1,3 @@
-/**
- * 
- */
 package edu.towson.cis.cosc455.MLeRoy.project1.implementation;
 
 import edu.towson.cis.cosc455.MLeRoy.project1.interfaces.LexicalAnalyzer;
@@ -10,49 +7,32 @@ import edu.towson.cis.cosc455.MLeRoy.project1.interfaces.LexicalAnalyzer;
  *
  */
 public class MyLexicalAnalyzer implements LexicalAnalyzer {
-
-	/* (non-Javadoc)
-	 * @see edu.towson.cis.cosc455.MLeRoy.project1.interfaces.LexicalAnalyzer#getNextToken()
-	 */
-	@Override
+	String nextCharacter = "";
+	int currentPosition = 0;
+	private char[] lex=new char[100];
+	private char next;
+	private int length;
+	private String source;
+	
+	public MyLexicalAnalyzer(String source){
+		this.source=source;
+	}
 	public void getNextToken() {
-		// TODO Auto-generated method stub
-
+		//syntax calls this and gets next 
 	}
-
-	/* (non-Javadoc)
-	 * @see edu.towson.cis.cosc455.MLeRoy.project1.interfaces.LexicalAnalyzer#getCharacter()
-	 */
-	@Override
 	public void getCharacter() {
-		// TODO Auto-generated method stub
 
 	}
-
-	/* (non-Javadoc)
-	 * @see edu.towson.cis.cosc455.MLeRoy.project1.interfaces.LexicalAnalyzer#addCharacter()
-	 */
-	@Override
 	public void addCharacter() {
-		// TODO Auto-generated method stub
 
 	}
-
-	/* (non-Javadoc)
-	 * @see edu.towson.cis.cosc455.MLeRoy.project1.interfaces.LexicalAnalyzer#isSpace(java.lang.String)
-	 */
-	@Override
 	public boolean isSpace(String c) {
-		// TODO Auto-generated method stub
+		if(c.equals(" "))
+			return true;
 		return false;
 	}
-
-	/* (non-Javadoc)
-	 * @see edu.towson.cis.cosc455.MLeRoy.project1.interfaces.LexicalAnalyzer#lookupToken()
-	 */
-	@Override
 	public boolean lookupToken() {
-		// TODO Auto-generated method stub
+		//check against every token or text
 		return false;
 	}
 
