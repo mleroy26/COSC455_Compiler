@@ -3,16 +3,20 @@ package edu.towson.cis.cosc455.MLeRoy.project1.implementation;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import java.util.Stack;
 
 public class MyCompiler {
 
 	public static String currentToken="**";
 	public static MyLexicalAnalyzer lexical;
+	public static MySemanticAnalyzer semantic;
+	static Stack<String> parse=new Stack<String>();
+	
 	@SuppressWarnings({ "null", "resource" })
-	public static void main(String[] args) throws CompilerException, FileNotFoundException {
+	public static void main(String[] args) throws FileNotFoundException {
 		String[] input = null;
 		String text="";
-		
+		try{
 		MySyntaxAnalyzer syntax=new MySyntaxAnalyzer();
 		if (args.length < 1) {
 			System.out.println("You must supply a filename.");
@@ -34,21 +38,9 @@ public class MyCompiler {
 			lexical=new MyLexicalAnalyzer(text);
 			syntax.markdown();
 		}
+		}catch (CompilerException e){
+			e.printStackTrace();
+		}
 
 	}
-//	private void openHTMLFileInBrowswer(String htmlFileStr){
-//		File file= new File(htmlFileStr.trim());
-//		if(!file.exists()){
-//			System.err.println("File "+ htmlFileStr +" does not exist.");
-//			return;
-//		}
-//		try{
-//			Desktop.getDesktop().browse(file.toURI());
-//		}
-//		catch(IOException ioe){
-//			System.err.println("Failed to open file");
-//			ioe.printStackTrace();
-//		}
-//		return ;
-//	}
 }

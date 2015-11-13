@@ -1,7 +1,5 @@
 package edu.towson.cis.cosc455.MLeRoy.project1.implementation;
 
-import java.util.Stack;
-
 import edu.towson.cis.cosc455.MLeRoy.project1.interfaces.SyntaxAnalyzer;
 import edu.towson.cis.cosc455.mleroy1.project1.tokens.ADDRESSB;
 import edu.towson.cis.cosc455.mleroy1.project1.tokens.ADDRESSE;
@@ -24,7 +22,6 @@ import edu.towson.cis.cosc455.mleroy1.project1.tokens.TITLEE;
  *
  */
 public class MySyntaxAnalyzer implements SyntaxAnalyzer {
-	Stack<String> parse=new Stack<String>();
 	private static ADDRESSB ADDRESSB;
 	private static TEXT TEXT;
 	private static BOLD BOLD;
@@ -41,19 +38,29 @@ public class MySyntaxAnalyzer implements SyntaxAnalyzer {
 	private static LINKE LINKE;
 	private static edu.towson.cis.cosc455.mleroy1.project1.tokens.USEB USEB;
 	private static DEFUSEE DEFUSEE;
+	private static edu.towson.cis.cosc455.mleroy1.project1.tokens.DOCE DOCE;
+	private static DOCB DOCB;
+	private static LISTITEME LISTITEME;
 
 	public void markdown() throws CompilerException {
-		if(MyCompiler.currentToken.equalsIgnoreCase(DOCB.text)){
+		if(DOCB.legal(MyCompiler.currentToken)){
 			addToParseTree();
 			MyCompiler.lexical.getNextToken();
 		} else
 			throw new CompilerException("Missing DOCB tag");
-		if(MyCompiler.currentToken.equalsIgnoreCase(DEFB.text))
+		if(DEFB.legal(MyCompiler.currentToken))
 			variableDefine();
 		if(MyCompiler.currentToken.equalsIgnoreCase(HEAD.text))
 			head();
 		if(isBody(MyCompiler.currentToken))
 			body();
+		if(DOCE.legal(MyCompiler.currentToken)){
+			addToParseTree();
+			MyCompiler.semantic.start();
+		} else
+			throw new CompilerException("Missing DOCE tag");
+		
+		
 	}
 
 	public void head() throws CompilerException {
@@ -94,7 +101,8 @@ public class MySyntaxAnalyzer implements SyntaxAnalyzer {
 			innerText();
 		if(PARAB.legal(MyCompiler.currentToken))
 				paragraph();
-
+		if(NEWLINE.legal(MyCompiler.currentToken))
+			newline();
 	}
 	public void paragraph() throws CompilerException {
 		if(PARAB.legal(MyCompiler.currentToken)){
@@ -113,8 +121,28 @@ public class MySyntaxAnalyzer implements SyntaxAnalyzer {
 			throw new CompilerException("Missing para end tag");
 	}
 	public void innerText() throws CompilerException {
-		// TODO Auto-generated method stub
-
+		if(USEB.legal(MyCompiler.currentToken))
+			variableUse();
+		if(BOLD.legal(MyCompiler.currentToken))
+			bold();
+		if(ITALICS.legal(MyCompiler.currentToken))
+			italics();
+		if(LISTITEMB.legal(MyCompiler.currentToken))
+			listitem();
+		if(AUDIO.legal(MyCompiler.currentToken))
+			audio();
+		if(VIDEO.legal(MyCompiler.currentToken))
+			video();
+		if(LINKB.legal(MyCompiler.currentToken))
+			link();
+		if(NEWLINE.legal(MyCompiler.currentToken))
+			newline();
+		if(TEXT.legal(MyCompiler.currentToken)){
+			addToParseTree();
+			MyCompiler.lexical.getNextToken();
+		}
+		if(isInnerText(MyCompiler.currentToken))
+			innerText();
 	}
 	public void variableDefine() throws CompilerException {
 		if(MyCompiler.currentToken.equalsIgnoreCase(DEFB.text)){
@@ -198,13 +226,39 @@ public class MySyntaxAnalyzer implements SyntaxAnalyzer {
 			throw new CompilerException("Missing italics end tag");
 	}
 	public void listitem() throws CompilerException {
-		// TODO Auto-generated method stub
-
+		if(LISTITEMB.legal(MyCompiler.currentToken)){
+			addToParseTree();
+			MyCompiler.lexical.getNextToken();
+		}else
+			throw new CompilerException("Missing LIST beginning tag");	
+		if(USEB.legal(MyCompiler.currentToken) | BOLD.legal(MyCompiler.currentToken) | ITALICS.legal(MyCompiler.currentToken) 
+				| LINKB.legal(MyCompiler.currentToken) | TEXT.legal(MyCompiler.currentToken))
+			innerItem();
+		if(LISTITEME.legal(MyCompiler.currentToken)){
+			addToParseTree();
+			MyCompiler.lexical.getNextToken();
+		}else
+			throw new CompilerException("Missing LIST end tag");	
+		if(LISTITEMB.legal(MyCompiler.currentToken))
+			listitem();
 	}
 	public void innerItem() throws CompilerException {
-		// TODO Auto-generated method stub
-
-	}
+		if(USEB.legal(MyCompiler.currentToken))
+			variableUse();
+		if(BOLD.legal(MyCompiler.currentToken))
+			bold();
+		if(ITALICS.legal(MyCompiler.currentToken))
+			italics();
+		if(LINKB.legal(MyCompiler.currentToken))
+			link();
+		if(TEXT.legal(MyCompiler.currentToken)){
+			addToParseTree();
+			MyCompiler.lexical.getNextToken();
+		}
+		if(USEB.legal(MyCompiler.currentToken) | BOLD.legal(MyCompiler.currentToken) | ITALICS.legal(MyCompiler.currentToken) 
+				| LINKB.legal(MyCompiler.currentToken) | TEXT.legal(MyCompiler.currentToken))
+			innerItem();
+		}
 	public void link() throws CompilerException {
 		if(LINKB.legal(MyCompiler.currentToken)){
 			addToParseTree();
@@ -291,7 +345,7 @@ public class MySyntaxAnalyzer implements SyntaxAnalyzer {
 			throw new CompilerException("Missing newline tag");
 	}
 	public void addToParseTree(){
-		parse.push(MyCompiler.currentToken);
+		MyCompiler.parse.push(MyCompiler.currentToken);
 	}
 	private boolean isBody(String s){
 		if(isInnerText(s) | PARAB.legal(s) |NEWLINE.legal(s))
