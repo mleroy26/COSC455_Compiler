@@ -5,7 +5,8 @@ import edu.towson.cis.cosc455.mleroy1.project1.tokens.TEXT;
 
 /**
  * @author mleroy1
- *
+ *The lexical analyzer checks that the characters are parts of legal lexems and passes them
+ *to the syntax analyzer
  */
 public class MyLexicalAnalyzer implements LexicalAnalyzer {
 	String nextCharacter = "";
@@ -16,11 +17,14 @@ public class MyLexicalAnalyzer implements LexicalAnalyzer {
 	private String source;
 	private static TEXT TEXT;
 
+	//constructor
 	public MyLexicalAnalyzer(String source){
 		this.source=source;
 		getCharacter();
 		getNextToken();
 	}
+	
+	//gets the next token from the source and is called by syntax analyzer
 	public void getNextToken() {
 		try{
 			if(currentPosition >= source.length())
@@ -57,6 +61,7 @@ public class MyLexicalAnalyzer implements LexicalAnalyzer {
 		setCurrentToken();
 		getCharacter();
 	}
+	//sets the current token in the compiler
 	private void setCurrentToken(){
 		String text="";
 		for(int i=0;i<length;i++){
@@ -66,7 +71,7 @@ public class MyLexicalAnalyzer implements LexicalAnalyzer {
 		lex=new char[100];
 		length=0;
 	}
-
+//gets the next character
 	public void getCharacter() {
 		next=source.charAt(currentPosition);
 		String a=""+next;
@@ -75,6 +80,7 @@ public class MyLexicalAnalyzer implements LexicalAnalyzer {
 			getCharacter();
 		}
 	}
+	//adds a charachter to the lexeme
 	public void addCharacter() {
 		lex[length]=next;
 		length++;
@@ -85,6 +91,7 @@ public class MyLexicalAnalyzer implements LexicalAnalyzer {
 			return true;
 		return false;
 	}
+	//looks up a token to see if it is legal
 	public boolean lookupToken() {
 		String lookup=""+next;
 		String[] tokens={"~","*","**","^","@","+",";","%"
@@ -95,6 +102,7 @@ public class MyLexicalAnalyzer implements LexicalAnalyzer {
 		}
 		return false;
 	}
+	//checks that text is used right and groups it together
 	private void addText(){
 		char c=source.charAt(currentPosition);
 		while(TEXT.legal(String.valueOf(c))){
@@ -108,6 +116,8 @@ public class MyLexicalAnalyzer implements LexicalAnalyzer {
 			}
 		}
 	}
+	
+	//chacks that hashtag tags arre used right
 	private void addHashTag() {
 		if("b".equalsIgnoreCase(String.valueOf(next))){
 			addCharacter();
@@ -139,6 +149,8 @@ public class MyLexicalAnalyzer implements LexicalAnalyzer {
 		}
 
 	}
+	
+	//checks that veriable tags are used right
 	private void addVariable() {
 		if("d".equalsIgnoreCase(String.valueOf(next))){
 			addCharacter();

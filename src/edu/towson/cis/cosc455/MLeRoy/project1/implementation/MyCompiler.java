@@ -5,12 +5,18 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.Stack;
 
+/**
+ * @author mleroy1
+ *The compiler gets the input file and then call the rest of the classes
+ */
+
 public class MyCompiler {
 
 	public static String currentToken="**";
 	public static MyLexicalAnalyzer lexical;
 	public static MySemanticAnalyzer semantic;
 	static Stack<String> parse=new Stack<String>();
+	public static String fileName;
 	
 	@SuppressWarnings({ "null", "resource" })
 	public static void main(String[] args) throws FileNotFoundException {
@@ -22,7 +28,7 @@ public class MyCompiler {
 			System.out.println("You must supply a filename.");
 			System.exit(1);
 		}
-		String fileName = args[0];
+		fileName = args[0];
 		int point=fileName.indexOf(".");
 		if(!fileName.substring(point).equals(".mkd"))
 			throw new CompilerException("Wrong file type");

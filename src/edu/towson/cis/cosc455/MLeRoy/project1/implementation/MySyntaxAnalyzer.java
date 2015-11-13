@@ -19,7 +19,9 @@ import edu.towson.cis.cosc455.mleroy1.project1.tokens.TITLEE;
 
 /**
  * @author mleroy1
- *
+ *This syntax analyzer implements the grammer from lexems provided by the lexical analyzer
+ *and puts them in a stack for the semantic anaalyzer
+ *throws errors if incorrect grammer
  */
 public class MySyntaxAnalyzer implements SyntaxAnalyzer {
 	private static ADDRESSB ADDRESSB;
@@ -41,7 +43,9 @@ public class MySyntaxAnalyzer implements SyntaxAnalyzer {
 	private static edu.towson.cis.cosc455.mleroy1.project1.tokens.DOCE DOCE;
 	private static DOCB DOCB;
 	private static LISTITEME LISTITEME;
-
+	
+	
+	//start of the grammer
 	public void markdown() throws CompilerException {
 		if(DOCB.legal(MyCompiler.currentToken)){
 			addToParseTree();
@@ -62,7 +66,7 @@ public class MySyntaxAnalyzer implements SyntaxAnalyzer {
 		
 		
 	}
-
+//grammer for the head
 	public void head() throws CompilerException {
 		if(MyCompiler.currentToken.equalsIgnoreCase(HEAD.text)){
 			addToParseTree();
@@ -78,7 +82,7 @@ public class MySyntaxAnalyzer implements SyntaxAnalyzer {
 			throw new CompilerException("Missing HEAD end tag");
 	}
 
-
+//grammer for the title
 	public void title() throws CompilerException {
 		if(MyCompiler.currentToken.equalsIgnoreCase(TITLEB.text)){
 			addToParseTree();
@@ -96,6 +100,7 @@ public class MySyntaxAnalyzer implements SyntaxAnalyzer {
 		} else
 			throw new CompilerException("Missing TITLE end tag");
 	}
+	//grammer for the body
 	public void body() throws CompilerException {
 		if(isInnerText(MyCompiler.currentToken))
 			innerText();
@@ -120,6 +125,7 @@ public class MySyntaxAnalyzer implements SyntaxAnalyzer {
 		}else
 			throw new CompilerException("Missing para end tag");
 	}
+	//grammer for the inner text
 	public void innerText() throws CompilerException {
 		if(USEB.legal(MyCompiler.currentToken))
 			variableUse();
@@ -144,6 +150,7 @@ public class MySyntaxAnalyzer implements SyntaxAnalyzer {
 		if(isInnerText(MyCompiler.currentToken))
 			innerText();
 	}
+	//grammer for variable define
 	public void variableDefine() throws CompilerException {
 		if(MyCompiler.currentToken.equalsIgnoreCase(DEFB.text)){
 			addToParseTree();
@@ -174,6 +181,7 @@ public class MySyntaxAnalyzer implements SyntaxAnalyzer {
 		} else
 			throw new CompilerException("Missing DEFB tag");
 	}
+	//grammer for using a variable
 	public void variableUse() throws CompilerException {
 		if(USEB.legal(MyCompiler.currentToken)){
 			addToParseTree();
@@ -191,6 +199,7 @@ public class MySyntaxAnalyzer implements SyntaxAnalyzer {
 		}else
 			throw new CompilerException("Missing use end tag");
 	}
+	//grammer for bold
 	public void bold() throws CompilerException {
 		if(BOLD.legal(MyCompiler.currentToken)){
 			addToParseTree();
@@ -208,6 +217,7 @@ public class MySyntaxAnalyzer implements SyntaxAnalyzer {
 		}else
 			throw new CompilerException("Missing bold end tag");
 	}
+	//grammer for italics 
 	public void italics() throws CompilerException {
 		if(ITALICS.legal(MyCompiler.currentToken)){
 			addToParseTree();
@@ -225,6 +235,7 @@ public class MySyntaxAnalyzer implements SyntaxAnalyzer {
 		}else
 			throw new CompilerException("Missing italics end tag");
 	}
+	//grammer for list items
 	public void listitem() throws CompilerException {
 		if(LISTITEMB.legal(MyCompiler.currentToken)){
 			addToParseTree();
@@ -242,6 +253,7 @@ public class MySyntaxAnalyzer implements SyntaxAnalyzer {
 		if(LISTITEMB.legal(MyCompiler.currentToken))
 			listitem();
 	}
+	//grammer for inner items
 	public void innerItem() throws CompilerException {
 		if(USEB.legal(MyCompiler.currentToken))
 			variableUse();
@@ -259,6 +271,7 @@ public class MySyntaxAnalyzer implements SyntaxAnalyzer {
 				| LINKB.legal(MyCompiler.currentToken) | TEXT.legal(MyCompiler.currentToken))
 			innerItem();
 		}
+	//grammer for links
 	public void link() throws CompilerException {
 		if(LINKB.legal(MyCompiler.currentToken)){
 			addToParseTree();
@@ -292,6 +305,7 @@ public class MySyntaxAnalyzer implements SyntaxAnalyzer {
 			throw new CompilerException("Missing address end tag");
 
 	}
+	// grammer for audio links
 	public void audio() throws CompilerException {
 		if(AUDIO.legal(MyCompiler.currentToken)){
 			addToParseTree();
@@ -313,8 +327,8 @@ public class MySyntaxAnalyzer implements SyntaxAnalyzer {
 			MyCompiler.lexical.getNextToken();
 		}else
 			throw new CompilerException("Missing address end tag");
-
 	}
+	//grammer for video links 
 	public void video() throws CompilerException {
 		if(VIDEO.legal(MyCompiler.currentToken)){
 			addToParseTree();
@@ -337,6 +351,7 @@ public class MySyntaxAnalyzer implements SyntaxAnalyzer {
 		}else
 			throw new CompilerException("Missing address end tag");
 	}
+	//grammer for a newline
 	public void newline() throws CompilerException {
 		if(NEWLINE.legal(MyCompiler.currentToken)){
 			addToParseTree();
@@ -344,14 +359,17 @@ public class MySyntaxAnalyzer implements SyntaxAnalyzer {
 		}else
 			throw new CompilerException("Missing newline tag");
 	}
+	//add tokens to the stack in my compiler for the semantic analyzer to use
 	public void addToParseTree(){
 		MyCompiler.parse.push(MyCompiler.currentToken);
 	}
+	//checks is a string belongs to the body
 	private boolean isBody(String s){
 		if(isInnerText(s) | PARAB.legal(s) |NEWLINE.legal(s))
 			return true;
 		return false;
 	}
+	//checks if a string belongs to inner text
 	private boolean isInnerText(String s){
 		if(BOLD.legal(s) | ITALICS.legal(s) | LISTITEMB.legal(s) | AUDIO.legal(s) |VIDEO.legal(s) | LINKB.legal(s) |NEWLINE.legal(s)
 				| TEXT.legal(s) |USEB.legal(s))
